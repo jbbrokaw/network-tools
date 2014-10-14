@@ -11,7 +11,7 @@ class Client():
     def __init__(self, message=None):
         self.message = message
 
-    def send(self):
+    def send_and_close(self):
         client_socket = socket.socket(*self._config)
         client_socket.connect(('127.0.0.1', 50000))
         client_socket.sendall(self.message)
@@ -26,4 +26,4 @@ if __name__ == '__main__':
         client = Client(sys.argv[1])
     else:
         client = Client("BOO!")
-    print client.send()
+    print client.send_and_close()

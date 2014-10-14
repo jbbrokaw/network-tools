@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import socket
+import http_server as h
 
 class Server():
     _config = (socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_IP)
@@ -13,8 +14,15 @@ class Server():
         self.server_socket.listen(1)  # Stops here
         conn, addr = self.server_socket.accept()
         received_message = conn.recv(self._buffsize)
-        print "Echoing message from", addr
-        response = "I heard you say: %s" % received_message
+        print "Parsing message from", addr
+        try:
+            uri = h.parse_and_respond(received_message)
+        except IOError as err:
+            if "bad method" in err:
+                response = "bad message"  # Handle errors here, return error message
+            response = "Bad something"
+        else:
+            response = h.make_OK_bytestring() + uri
         conn.sendall(response)
         return received_message
 

@@ -1,5 +1,6 @@
 """
-code that tests the DoublyLinkedList class defined in doubly_linked_list.py
+code that tests the Client and Server classes 
+defined in echo_client.py and echo_server.py
 
 can be run with py.test
 """

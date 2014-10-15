@@ -16,7 +16,7 @@ class Client():
         client_socket.connect(('127.0.0.1', 50000))
         client_socket.sendall(self.message)
         client_socket.shutdown(socket.SHUT_WR)
-        response = client_socket.recv(32)
+        response = client_socket.recv(self._buffsize)
         client_socket.close()
         return response
 

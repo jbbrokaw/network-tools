@@ -22,16 +22,17 @@ class HtmlServer():
         try:
             uri = h.parse_and_respond(received_message)
         except IOError as err:
-            if "Bad request" in err:
+            if "Bad request" in err.message:
                 response = h.make_ERROR_bytestring(400)
-            elif "Bad method" in err:
+            elif "Bad method" in err.message:
                 response = h.make_ERROR_bytestring(405)  # Return error message
-            elif "Bad protocol" in err:
+            elif "Bad protocol" in err.message:
                 response = h.make_ERROR_bytestring(505)
-            elif "File not found" in err:
+            elif "File not found" in err.message:
                 response = h.make_ERROR_bytestring(404)
             else:
                 response = h.make_ERROR_bytestring(500)
+                print err
                     # Internal server error: WE SHOULD NEVER GET THIS
         else:
             response = h.make_OK_bytestring() + uri

@@ -19,6 +19,7 @@ class HtmlServer():
         conn, addr = self.server_socket.accept()
         received_message = conn.recv(self._buffsize)
         print "Parsing message from", addr
+        print received_message
         try:
             uri = h.parse_and_respond(received_message)
         except IOError as err:

@@ -9,6 +9,5 @@ HTTP and HTML Servers
 _____________________
 
 * Http_server.py has some helper functions to parse requests and make responses
-* Html_server.py will run and respond to valid http requests
-* Sorry about the naming of these things
+* And also the HttpServer class that can listen and return assets for valid http requests (GET only, HTTP/1.1 (although it doesn't handle keeping the connection open well))
 * Tests (py.test) demonstrate good working of these

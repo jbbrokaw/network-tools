@@ -26,6 +26,7 @@ def make_ERROR_bytestring(ERR_CODE):
 
 
 def find_asset_and_type(asset_name):
+    """Return the asset (body), its type, and its length (for the header)"""
     asset_name = "webroot" + asset_name
     p = pathlib.Path(asset_name)
     if os.path.isdir(asset_name):
@@ -45,11 +46,12 @@ def find_asset_and_type(asset_name):
 
 
 def parse_and_respond(request):
+    """Parse request and generate valid response. Raise appropriate errors"""
     try:
         command = request.splitlines()[0]
         method, uri, protocol = tuple(command.split())
         asset_name = uri  # Makes it like ./index.html or ./dir
-    except ValueError:
+    except (ValueError, IndexError):  # Index raised by subscripting the split
         raise IOError("Bad request")
 
     if method != "GET":
@@ -64,18 +66,22 @@ def parse_and_respond(request):
         raise IOError("File not found")
 
 
-class HttpServer():
+class HttpServer(object):
     _config = (socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_IP)
     _buffsize = 4096
     server_socket = socket.socket(*_config)
     server_socket.bind(('127.0.0.1', 50000))
+    # All http servers on same address/port, with same config
 
     def __init__(self):
         self.listening = False
 
     def listen_and_respond(self):
-        self.server_socket.listen(1)  # Stops here
+        """Start listening, ask helper functionss for resonse, handle
+        any errors, send response"""
+        self.server_socket.listen(1)
         print "LISTENING"
+        # Stops here
         conn, addr = self.server_socket.accept()
         received_message = conn.recv(self._buffsize)
         print "Parsing message from", addr
@@ -87,7 +93,7 @@ class HttpServer():
             if "Bad request" in err.message:
                 response = make_ERROR_bytestring(400)
             elif "Bad method" in err.message:
-                response = make_ERROR_bytestring(405)  # Return error message
+                response = make_ERROR_bytestring(405)
             elif "Bad protocol" in err.message:
                 response = make_ERROR_bytestring(505)
             elif "File not found" in err.message:
@@ -99,6 +105,7 @@ class HttpServer():
         else:
             response = make_OK_bytestring(asset_type, asset_length) + asset
         conn.sendall(response)
+        conn.close()
 
     def close(self):
         self.server_socket.close()

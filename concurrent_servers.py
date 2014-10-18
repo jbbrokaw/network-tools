@@ -30,8 +30,6 @@ def generate_response(conn, addr):
             response = make_ERROR_bytestring(500)
             print err
                 # Internal server error: WE SHOULD NEVER GET THIS
-    except IndexError:  # This raises from splitlinesif we get a blank
-        response = make_ERROR_bytestring(400)
     else:
         response = make_OK_bytestring(asset_type, asset_length) + asset
     conn.sendall(response)
